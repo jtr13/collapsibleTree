@@ -70,13 +70,13 @@ collapsibleTree.data.frame <- function(df, hierarchy, root = deparse(substitute(
   node <- data.tree::as.Node(df, pathDelimiter = "//")
 
   # fill in the node colors, traversing down the tree
-  if(length(fill)>1) {
-    if(length(fill) != node$totalCount) {
-      stop(paste("Expected fill vector of length", node$totalCount, "but got", length(fill)))
-    }
-    node$Set(fill = fill, traversal = ifelse(fillByLevel, "level", "pre-order"))
+
+  if(fill %in% colnames(df)) {
+    # fill in node colors based on column name
+    node$Do(function(x) x$fill <- x[[fill]])
     jsonFields <- c(jsonFields, "fill")
   } else {
+    # default to using fill value as literal color name
     options$fill <- fill
   }
 
